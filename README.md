@@ -23,6 +23,14 @@ mvn spring-boot:run
 
 The application will start running on [http://localhost:8080](http://localhost:8080).
 
+## Testing
+
+The application has a suite of unit and integration tests. You can run the tests using the following command:
+
+```
+mvn test
+```
+
 ## API Documentation
 
 API docs can be found at [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)

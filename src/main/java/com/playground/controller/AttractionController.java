@@ -29,10 +29,9 @@ public class AttractionController {
     }
 
     @Operation(summary = "Get an attraction by Id")
-    @GetMapping("/{id}")
-    public Attraction getAttraction(@PathVariable Long id) {
-        return attractionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Attraction not found"));
+    @GetMapping("/{attractionId}")
+    public Attraction getAttraction(@PathVariable("attractionId") Attraction attraction) {
+        return attraction;
     }
 
     @Operation(summary = "Add an attraction")
@@ -42,22 +41,18 @@ public class AttractionController {
     }
 
     @Operation(summary = "Update an attraction")
-    @PutMapping("/{id}")
-    public Attraction updateAttraction(@PathVariable Long id, @RequestBody Attraction newAttraction) {
-        return attractionRepository.findById(id)
-                .map(attraction -> {
-                    attraction.setName(newAttraction.getName());
-                    return attractionRepository.save(attraction);
-                })
-                .orElseGet(() -> {
-                    newAttraction.setId(id);
-                    return attractionRepository.save(newAttraction);
-                });
+    @PutMapping("/{attractionId}")
+    public Attraction updateAttraction(@PathVariable("attractionId") Attraction attraction,
+            @RequestBody Attraction newAttraction) {
+
+        attraction.setName(newAttraction.getName());
+
+        return attractionRepository.save(attraction);
     }
 
     @Operation(summary = "Delete an attraction")
-    @DeleteMapping("/{id}")
-    public void deleteAttraction(@PathVariable Long id) {
-        attractionRepository.deleteById(id);
+    @DeleteMapping("/{attractionId}")
+    public void deleteAttraction(@PathVariable("attractionId") Long attractionId) {
+        attractionRepository.deleteById(attractionId);
     }
 }

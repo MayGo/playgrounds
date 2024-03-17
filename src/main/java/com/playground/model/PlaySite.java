@@ -34,4 +34,24 @@ public class PlaySite {
     @OneToMany
     private List<Kid> queue;
 
+    public PlaySite() {
+        this.attractions = new ArrayList<>();
+        this.kids = new ArrayList<>();
+        this.queue = new ArrayList<>();
+    }
+
+    public PlaySite(String name, List<Attraction> attractions) {
+        this.name = name;
+        this.attractions = attractions;
+        this.kids = new ArrayList<>();
+        this.queue = new ArrayList<>();
+    }
+
+    public boolean isFull() {
+        int totalCapacity = attractions.stream()
+                .mapToInt(Attraction::getCapacity)
+                .sum();
+        return kids.size() >= totalCapacity;
+    }
+
 }

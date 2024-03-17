@@ -28,10 +28,9 @@ public class KidController {
     }
 
     @Operation(summary = "Get a kid by Id")
-    @GetMapping("/{id}")
-    public Kid getKid(@PathVariable Long id) {
-        return kidRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Kid not found"));
+    @GetMapping("/{kidId}")
+    public Kid getKid(@PathVariable("kidId") Kid kid) {
+        return kid;
     }
 
     @Operation(summary = "Add a kid")
@@ -41,22 +40,18 @@ public class KidController {
     }
 
     @Operation(summary = "Update a kid")
-    @PutMapping("/{id}")
-    public Kid updateKid(@PathVariable Long id, @RequestBody Kid newKid) {
-        return kidRepository.findById(id)
-                .map(kid -> {
-                    kid.setName(newKid.getName());
-                    return kidRepository.save(kid);
-                })
-                .orElseGet(() -> {
-                    newKid.setId(id);
-                    return kidRepository.save(newKid);
-                });
+    @PutMapping("/{kidId}")
+    public Kid updateKid(@PathVariable("kidId") Kid kid, @RequestBody Kid newKid) {
+
+        kid.setName(newKid.getName());
+        kid.setTicketNumber(newKid.getTicketNumber());
+
+        return kidRepository.save(newKid);
     }
 
     @Operation(summary = "Delete a kid")
-    @DeleteMapping("/{id}")
-    public void deleteKid(@PathVariable Long id) {
-        kidRepository.deleteById(id);
+    @DeleteMapping("/{kidId}")
+    public void deleteKid(@PathVariable("kidId") Long kidId) {
+        kidRepository.deleteById(kidId);
     }
 }

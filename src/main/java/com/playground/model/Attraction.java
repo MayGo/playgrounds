@@ -21,6 +21,11 @@ public class Attraction {
     @Size(min = 0, max = 100)
     private String name;
 
+    private int capacity = 1;
+
+    public Attraction() {
+    }
+
     public Attraction(String name) {
         this.name = name;
     }

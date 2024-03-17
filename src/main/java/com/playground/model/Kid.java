@@ -19,5 +19,20 @@ public class Kid {
     @Size(min = 0, max = 100)
     private String name;
 
+    private int age;
+
     private int ticketNumber;
+
+    public Kid() {
+    }
+
+    public Kid(String name, int ticketNumber, int age) {
+        this.name = name;
+        this.ticketNumber = ticketNumber;
+        this.age = age;
+    }
+
+    public Boolean acceptsWaitingInQueue() {
+        return age > 10;
+    }
 }
