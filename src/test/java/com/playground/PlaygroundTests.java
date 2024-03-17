@@ -267,7 +267,7 @@ public class PlaygroundTests {
                 // Check total visitor count
                 mockMvc.perform(get("/api/playsites/total-visitor-count"))
                                 .andExpect(status().isOk())
-                                .andExpect(content().string("0"));
+                                .andExpect(content().string("1"));
 
                 // Check play site utilization
                 mockMvc.perform(get("/api/playsites/" + playSite.getId() + "/utilization"))
@@ -347,6 +347,79 @@ public class PlaygroundTests {
                                 .andExpect(jsonPath("$.kids[0].id").value(kid2.getId().intValue()))
                                 .andExpect(jsonPath("$.kids[1].id").value(kidOlder.getId().intValue()))
                                 .andExpect(jsonPath("$.queue.length()").value(0));
+
+        }
+
+        @Test
+        public void testCheckTotalVisitorCount() throws Exception {
+                // Create attractions
+                Attraction swing = new Attraction("Swing");
+                Attraction slide = new Attraction("Slide");
+
+                attractionRepository.saveAll(Arrays.asList(swing, slide));
+
+                // Create a play site
+                PlaySite playSite = new PlaySite("PlaySite 1", Arrays.asList(swing, slide));
+                playSiteRepository.save(playSite);
+
+                // Add a kid to the play site
+                Kid kid = new Kid("John", 1, 10);
+                Kid kid2 = new Kid("Tim", 2, 8);
+
+                kidRepository.saveAll(Arrays.asList(kid, kid2));
+
+                mockMvc.perform(post("/api/playsites/" + playSite.getId() + "/kids")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(kid.getId().toString()))
+                                .andExpect(status().isOk());
+
+                mockMvc.perform(post("/api/playsites/" + playSite.getId() + "/kids")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(kid2.getId().toString()))
+                                .andExpect(status().isOk());
+
+                // Check total visitor count
+                mockMvc.perform(get("/api/playsites/total-visitor-count"))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string("2"));
+
+                // Remove kid from play site
+                mockMvc.perform(delete("/api/playsites/" + playSite.getId() + "/kids/" +
+                                kid.getId()))
+                                .andExpect(status().isOk());
+
+                // Remove kid from play site
+                mockMvc.perform(delete("/api/playsites/" + playSite.getId() + "/kids/" +
+                                kid2.getId()))
+                                .andExpect(status().isOk());
+
+                // Check total visitor count
+                mockMvc.perform(get("/api/playsites/total-visitor-count"))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string("2"));
+
+                mockMvc.perform(post("/api/playsites/" + playSite.getId() + "/kids")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(kid2.getId().toString()))
+                                .andExpect(status().isOk());
+
+                mockMvc.perform(get("/api/playsites/total-visitor-count"))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string("3"));
+
+                // Create a play site
+                PlaySite playSite2 = new PlaySite("PlaySite 2", Arrays.asList(swing, slide));
+                playSiteRepository.save(playSite2);
+
+                // Add a kid to the play site
+                mockMvc.perform(post("/api/playsites/" + playSite2.getId() + "/kids")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(kid.getId().toString()))
+                                .andExpect(status().isOk());
+
+                mockMvc.perform(get("/api/playsites/total-visitor-count"))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string("4"));
 
         }
 

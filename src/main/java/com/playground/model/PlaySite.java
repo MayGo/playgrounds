@@ -6,6 +6,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -25,7 +28,8 @@ public class PlaySite {
     @Size(min = 0, max = 100)
     private String name;
 
-    @OneToMany
+    @ManyToMany
+    @JoinTable(name = "play_site_attractions", joinColumns = @JoinColumn(name = "play_site_id"), inverseJoinColumns = @JoinColumn(name = "attractions_id"))
     private List<Attraction> attractions;
 
     @OneToMany
@@ -33,6 +37,13 @@ public class PlaySite {
 
     @OneToMany
     private List<Kid> queue;
+
+    private int totalVisitorCount = 0;
+
+    public void addKid(Kid kid) {
+        kids.add(kid);
+        totalVisitorCount++;
+    }
 
     public PlaySite() {
         this.attractions = new ArrayList<>();

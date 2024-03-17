@@ -3,7 +3,6 @@ package com.playground.service;
 import com.playground.exception.NotWaitingException;
 import com.playground.model.Kid;
 import com.playground.model.PlaySite;
-import com.playground.repository.KidRepository;
 import com.playground.repository.PlaySiteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,7 @@ public class PlaygroundService {
         // If there are kids in the queue, add the first one to the play site
         if (!playSite.getQueue().isEmpty()) {
             Kid nextKid = playSite.getQueue().remove(0);
-            playSite.getKids().add(nextKid);
+            playSite.addKid(nextKid);
         }
 
         playSiteRepository.save(playSite);
@@ -39,7 +38,7 @@ public class PlaygroundService {
                 throw new NotWaitingException("Kid does not accept waiting in queue");
             }
         } else {
-            playSite.getKids().add(kid);
+            playSite.addKid(kid);
         }
 
         playSiteRepository.save(playSite);
@@ -58,7 +57,7 @@ public class PlaygroundService {
     public int getTotalVisitorCount() {
 
         return playSiteRepository.findAll().stream()
-                .mapToInt(playSite -> playSite.getKids().size())
+                .mapToInt(playSite -> playSite.getTotalVisitorCount())
                 .sum();
     }
 }
