@@ -197,6 +197,36 @@ public class PlaygroundTests {
         }
 
         @Test
+        public void testAttractionCapacity() throws Exception {
+
+                // Create attractions
+                Attraction swing = new Attraction("Double Swing");
+                swing.setCapacity(2);
+
+                attractionRepository.save(swing);
+
+                // Create a play site
+                PlaySite playSite = new PlaySite("PlaySite 1", Arrays.asList(swing));
+                playSiteRepository.save(playSite);
+
+                // Add a kid to the play site
+                Kid kid = new Kid("John", 1, 10);
+
+                kidRepository.save(kid);
+
+                mockMvc.perform(post("/api/playsites/" + playSite.getId() + "/kids")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(kid.getId().toString()))
+                                .andExpect(status().isOk());
+
+                // Check play site utilization
+                mockMvc.perform(get("/api/playsites/" + playSite.getId() + "/utilization"))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string("50.0"));
+
+        }
+
+        @Test
         public void testSimplePlayground() throws Exception {
                 // Create attractions
                 Attraction swing = new Attraction("Swing");
@@ -222,7 +252,7 @@ public class PlaygroundTests {
                 // Check play site utilization
                 mockMvc.perform(get("/api/playsites/" + playSite.getId() + "/utilization"))
                                 .andExpect(status().isOk())
-                                .andExpect(content().string("33.33333333333333"));
+                                .andExpect(content().string("33.33"));
 
                 // Check total visitor count
                 mockMvc.perform(get("/api/playsites/total-visitor-count"))
@@ -304,6 +334,19 @@ public class PlaygroundTests {
                                 .andExpect(jsonPath("$.kids.length()").value(2))
                                 .andExpect(jsonPath("$.queue.length()").value(1))
                                 .andExpect(jsonPath("$.queue[0].id").value(kidOlder.getId().intValue()));
+
+                // Remove kid from play site to check if the kid from the queue will be added
+                mockMvc.perform(delete("/api/playsites/" + playSite.getId() + "/kids/" +
+                                kid.getId()))
+                                .andExpect(status().isOk());
+
+                // Check kid in queue
+                mockMvc.perform(get("/api/playsites/" + playSite.getId()))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.kids.length()").value(2))
+                                .andExpect(jsonPath("$.kids[0].id").value(kid2.getId().intValue()))
+                                .andExpect(jsonPath("$.kids[1].id").value(kidOlder.getId().intValue()))
+                                .andExpect(jsonPath("$.queue.length()").value(0));
 
         }
 

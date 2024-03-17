@@ -11,18 +11,23 @@ import org.springframework.stereotype.Service;
 @Service
 public class PlaygroundService {
 
-    private final KidRepository kidRepository;
     private final PlaySiteRepository playSiteRepository;
 
     @Autowired
-    public PlaygroundService(KidRepository kidRepository, PlaySiteRepository playSiteRepository) {
-        this.kidRepository = kidRepository;
+    public PlaygroundService(PlaySiteRepository playSiteRepository) {
         this.playSiteRepository = playSiteRepository;
     }
 
     public void removeKidFromPlaySite(PlaySite playSite, Kid kid) {
         playSite.getKids().remove(kid);
         playSite.getQueue().remove(kid);
+
+        // If there are kids in the queue, add the first one to the play site
+        if (!playSite.getQueue().isEmpty()) {
+            Kid nextKid = playSite.getQueue().remove(0);
+            playSite.getKids().add(nextKid);
+        }
+
         playSiteRepository.save(playSite);
     }
 
@@ -46,7 +51,8 @@ public class PlaygroundService {
                 .sum();
 
         int currentOccupancy = playSite.getKids().size();
-        return (double) currentOccupancy / totalCapacity * 100;
+        double utilizationPercentage = (double) currentOccupancy / totalCapacity * 100;
+        return Math.round(utilizationPercentage * 100.0) / 100.0;
     }
 
     public int getTotalVisitorCount() {
