@@ -8,8 +8,8 @@ import com.playground.repository.AttractionRepository;
 import com.playground.repository.KidRepository;
 import com.playground.repository.PlaySiteRepository;
 import com.playground.service.VisitorService;
+import com.playground.utils.TestData;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,18 +19,20 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
-public class PlaygroundTests {
+public class PlaySiteTests {
 
         @Autowired
         private MockMvc mockMvc;
@@ -338,6 +340,29 @@ public class PlaygroundTests {
                                 .andExpect(status().isOk())
                                 .andExpect(content().string("0"));
 
+        }
+
+        @Test
+        public void test400ErrorResponse() throws Exception {
+
+                // Test for POST request with name over 100 characters long
+                MvcResult result = mockMvc.perform(post("/api/playsites")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\": \"" + TestData.LONG_STRING + "\"}"))
+                                .andExpect(status().isBadRequest())
+                                .andExpect(jsonPath("$[0].field").value("name"))
+                                .andExpect(jsonPath("$[0].message").value("size must be between 1 and 100"))
+                                .andReturn();
+
+                assertEquals(400, result.getResponse().getStatus());
+        }
+
+        @Test
+        public void test404ErrorResponse() throws Exception {
+                ResultActions resultActions = mockMvc.perform(get("/api/playsites/123"))
+                                .andExpect(status().isNotFound());
+
+                assertEquals(404, resultActions.andReturn().getResponse().getStatus());
         }
 
 }
