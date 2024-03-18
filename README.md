@@ -13,6 +13,21 @@ The API provides the following functionality:
 - Providing play site utilization at the current moment, measured in percentage.
 - Providing the total visitor count during the current day on all play sites. Resets at midnight.
 
+What is not in the scope:
+
+- Authentication and authorization
+- Pagination
+- Data validation
+- Persistence of data
+- Error handling
+- Logging
+- Health Checks, Monitoring and metrics
+- Caching
+- Rate limiting
+- API versioning
+- Internationalization
+- CORS
+
 ## Usage
 
 To run the application, make sure you have Java and Maven installed. Then, navigate to the project directory and run the following command:
