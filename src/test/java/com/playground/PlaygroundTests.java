@@ -7,6 +7,7 @@ import com.playground.model.PlaySite;
 import com.playground.repository.AttractionRepository;
 import com.playground.repository.KidRepository;
 import com.playground.repository.PlaySiteRepository;
+import com.playground.service.VisitorService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,13 +44,8 @@ public class PlaygroundTests {
         @Autowired
         private PlaySiteRepository playSiteRepository;
 
-        @BeforeEach
-        public void clearDatabase() {
-
-                // playSiteRepository.deleteAll();
-                // kidRepository.deleteAll();
-                // attractionRepository.deleteAll();
-        }
+        @Autowired
+        private VisitorService visitorService;
 
         @Test
         public void testKidCRUD() throws Exception {
@@ -420,6 +416,13 @@ public class PlaygroundTests {
                 mockMvc.perform(get("/api/playsites/total-visitor-count"))
                                 .andExpect(status().isOk())
                                 .andExpect(content().string("4"));
+
+                visitorService.resetVisitorCount();
+
+                // Check that the visitor count has been reset to 0
+                mockMvc.perform(get("/api/playsites/total-visitor-count"))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string("0"));
 
         }
 

@@ -17,7 +17,7 @@ public class VisitorService {
         this.playSiteRepository = playSiteRepository;
     }
 
-    @Scheduled(cron = "0 0 0 * * ?") // this runs at midnight every day
+    @Scheduled(cron = "${resetVisitorCountScheduler.cron}")
     public void resetVisitorCount() {
         playSiteRepository.findAll().forEach(playSite -> {
             playSite.setTotalVisitorCount(0);
