@@ -18,7 +18,7 @@ public class Attraction {
     private Long id;
 
     @NotBlank
-    @Size(min = 0, max = 100)
+    @Size(min = 1, max = 100)
     private String name;
 
     private int capacity = 1;

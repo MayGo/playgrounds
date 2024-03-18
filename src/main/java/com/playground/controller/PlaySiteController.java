@@ -6,10 +6,17 @@ import com.playground.model.PlaySite;
 import com.playground.repository.KidRepository;
 import com.playground.repository.PlaySiteRepository;
 import com.playground.service.PlaygroundService;
+import com.playground.utils.ApiDeleteResponses;
+import com.playground.utils.ApiGetEntityResponses;
+import com.playground.utils.ApiGetResponses;
+import com.playground.utils.ApiPostResponses;
+import com.playground.utils.ApiPutResponses;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,34 +41,39 @@ public class PlaySiteController {
         this.playgroundService = playgroundService;
     }
 
+    @ApiGetResponses
     @Operation(summary = "View a list of all playsites")
     @GetMapping
     public List<PlaySite> getAllPlaySites() {
         return playSiteRepository.findAll();
     }
 
+    @ApiGetEntityResponses
     @Operation(summary = "Get a playsite by Id")
     @GetMapping("/{playSiteId}")
     public PlaySite getPlaySite(@PathVariable("playSiteId") PlaySite playSite) {
         return playSite;
     }
 
+    @ApiPostResponses
     @Operation(summary = "Add a playsite")
     @PostMapping
-    public PlaySite createPlaySite(@RequestBody PlaySite playSite) {
+    public PlaySite createPlaySite(@Valid @RequestBody PlaySite playSite) {
         return playSiteRepository.save(playSite);
     }
 
+    @ApiPutResponses
     @Operation(summary = "Update a playsite")
     @PutMapping("/{playSiteId}")
     public PlaySite updatePlaySite(@PathVariable("playSiteId") PlaySite playSite,
-            @RequestBody PlaySite newPlaySite) {
+            @Valid @RequestBody PlaySite newPlaySite) {
 
         playSite.setName(newPlaySite.getName());
 
         return playSiteRepository.save(playSite);
     }
 
+    @ApiPostResponses
     @Operation(summary = "Add a kid to a playsite")
     @PostMapping("/{playSiteId}/kids")
     public ResponseEntity<String> addKidToPlaySite(
@@ -77,6 +89,7 @@ public class PlaySiteController {
         }
     }
 
+    @ApiDeleteResponses
     @Operation(summary = "Remove a kid from a playsite")
     @DeleteMapping("/{playSiteId}/kids/{kidId}")
     public ResponseEntity<Kid> removeKidFromPlaySite(
@@ -88,17 +101,20 @@ public class PlaySiteController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @ApiDeleteResponses
     @Operation(summary = "Delete a playsite")
     @DeleteMapping("/{playSiteId}")
     public void deletePlaySite(@PathVariable("playSiteId") Long id) {
         playSiteRepository.deleteById(id);
     }
 
+    @ApiGetEntityResponses
     @GetMapping("/{playSiteId}/utilization")
     public Double getPlaySiteUtilization(@PathVariable("playSiteId") PlaySite playSite) {
         return playgroundService.getPlaySiteUtilization(playSite);
     }
 
+    @ApiGetResponses
     @GetMapping("/total-visitor-count")
     public Integer getTotalVisitorCount() {
         return playgroundService.getTotalVisitorCount();
