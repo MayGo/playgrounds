@@ -17,7 +17,6 @@ What is not in the scope:
 
 - Authentication and authorization
 - Pagination
-- Data validation
 - Persistence of data
 - Error handling
 - Logging
