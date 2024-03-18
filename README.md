@@ -11,7 +11,7 @@ The API provides the following functionality:
 - Enqueuing kids in a queue when a play site is full. The API registers queues on play sites and allows kids to wait in the queue if they accept.
 - Removing kids from play sites or queues.
 - Providing play site utilization at the current moment, measured in percentage.
-- Providing the total visitor count during the current day on all play sites.
+- Providing the total visitor count during the current day on all play sites. Resets at midnight.
 
 ## Usage
 

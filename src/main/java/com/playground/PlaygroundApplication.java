@@ -2,11 +2,13 @@ package com.playground;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-public class PlaygroundRestApiApplication {
+@EnableScheduling
+public class PlaygroundApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(PlaygroundRestApiApplication.class, args);
+        SpringApplication.run(PlaygroundApplication.class, args);
     }
 }
